@@ -1,14 +1,12 @@
-import java.awt.Point;         // Import for the Point class
-import java.util.List;         // Import for the List interface
-import java.util.ArrayList;    // Import for the ArrayList implementation
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.awt.Point;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.io.*;
 import java.net.*;
 
-public class Server implements Runnable, PropertyChangeListener {
+public class Server implements Runnable {
     private WorkArea workArea;
     private int transmissionSpeed; // Speed in data/second
     private Timer timer;
@@ -73,10 +71,5 @@ public class Server implements Runnable, PropertyChangeListener {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void propertyChange(java.beans.PropertyChangeEvent evt) {
-        // Handle property changes if needed
     }
 }
