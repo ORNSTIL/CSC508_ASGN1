@@ -7,6 +7,4 @@ public class Delegate extends PropertyChangeSupport {
         super(source);
         this.workArea = workArea;
     }
-
-    // Additional delegation methods if needed
 }
