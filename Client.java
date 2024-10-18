@@ -5,28 +5,78 @@ import java.util.List;
 
 public class Client {
     public static void main(String[] args) {
+        Socket socket = null;
+        ObjectInputStream objectInputStream = null;
+
+        // Retry logic: Try to connect to the server a few times before failing
+        int maxRetries = 5;  // Maximum number of retry attempts
+        int retryInterval = 2000;  // Wait time between retries in milliseconds (2 seconds)
+        int attempts = 0;
+
+        while (attempts < maxRetries) {
+            try {
+                // Try to connect to the server
+                socket = new Socket("localhost", 12345);  // Connect to server on port 12345
+                System.out.println("Connected to server.");
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                break;  // If connected, exit the loop
+            } catch (ConnectException e) {
+                attempts++;
+                System.err.println("Failed to connect to the server. Attempt " + attempts + " of " + maxRetries);
+                if (attempts < maxRetries) {
+                    System.err.println("Retrying in " + (retryInterval / 1000) + " seconds...");
+                    try {
+                        Thread.sleep(retryInterval);  // Wait before retrying
+                    } catch (InterruptedException ie) {
+                        System.err.println("Retry interrupted.");
+                    }
+                } else {
+                    System.err.println("Could not connect to the server after " + maxRetries + " attempts. Exiting.");
+                    return;  // Exit the program after max retries
+                }
+            } catch (IOException e) {
+                System.err.println("An I/O error occurred: " + e.getMessage());
+                e.printStackTrace();
+                return;  // Exit if there's an I/O error
+            }
+        }
+
         try {
-            Socket socket = new Socket("localhost", 12345);  // Connect to server on port 12345
-            System.out.println("Connected to server.");
-
-            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-
+            // Process incoming data from the server
             while (true) {
                 try {
                     // Read the list of click positions from the server
                     List<Point> clicks = (List<Point>) objectInputStream.readObject();
                     System.out.println("Received clicks from server: " + clicks);
                 } catch (EOFException eof) {
-                    // Server has closed the connection gracefully
+                    // Server has closed the connection
                     System.out.println("Server closed connection. Exiting.");
-                    break;  // Exit the loop when server closes the connection
+                    break;
+                } catch (SocketException se) {
+                    // Handle the case when the connection is reset (e.g., server closes the socket)
+                    System.err.println("Connection with the server was reset. Exiting.");
+                    break;
+                } catch (ClassNotFoundException e) {
+                    System.err.println("Class not found while reading data from server.");
+                    e.printStackTrace();
                 }
             }
-
-            objectInputStream.close();
-            socket.close();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            System.err.println("Error while communicating with the server: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            // Clean up resources
+            try {
+                if (objectInputStream != null) {
+                    objectInputStream.close();
+                }
+                if (socket != null) {
+                    socket.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error while closing resources: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
