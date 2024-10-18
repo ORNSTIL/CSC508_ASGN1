@@ -1,31 +1,54 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WorkArea extends JPanel implements MouseListener {
-    private Blackboard blackboard;
+public class Blackboard {
+    private List<Point> clickPositions;  // Shared repository of click data
+    private int transmissionSpeed;       // Shared transmission speed
+    private boolean tracking;            // Shared state for tracking status
 
-    public WorkArea(Blackboard blackboard) {
-        this.blackboard = blackboard;
-        addMouseListener(this);
+    public Blackboard() {
+        this.clickPositions = new ArrayList<>();
+        this.transmissionSpeed = 60;     // Default speed
+        this.tracking = false;           // Initial state
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (blackboard.isTracking()) {
-            Point clickPosition = e.getPoint();
-            blackboard.addClick(clickPosition);  // Add click to blackboard
-            System.out.println("Mouse released at: " + clickPosition);
+    // Add a click position to the blackboard
+    public synchronized void addClick(Point click) {
+        if (tracking) {
+            clickPositions.add(click);
         }
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-    @Override
-    public void mousePressed(MouseEvent e) {}
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-    @Override
-    public void mouseExited(MouseEvent e) {}
+    // Get all click positions (copy to avoid modification)
+    public synchronized List<Point> getClickPositions() {
+        return new ArrayList<>(clickPositions);
+    }
+
+    // Clear click positions
+    public synchronized void clearClicks() {
+        clickPositions.clear();
+    }
+
+    // Transmission speed getter and setter
+    public synchronized int getTransmissionSpeed() {
+        return transmissionSpeed;
+    }
+
+    public synchronized void setTransmissionSpeed(int speed) {
+        this.transmissionSpeed = speed;
+    }
+
+    // Tracking state control
+    public synchronized boolean isTracking() {
+        return tracking;
+    }
+
+    public synchronized void startTracking() {
+        tracking = true;
+    }
+
+    public synchronized void stopTracking() {
+        tracking = false;
+    }
 }
