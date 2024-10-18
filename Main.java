@@ -1,10 +1,10 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main extends JFrame implements ActionListener {
     private JMenuItem startMenuItem, stopMenuItem, configureMenuItem;
+    private Blackboard blackboard;
     private WorkArea workArea;
     private Server server;
     private Thread serverThread;
@@ -32,13 +32,15 @@ public class Main extends JFrame implements ActionListener {
         stopMenuItem.addActionListener(this);
         configureMenuItem.addActionListener(this);
 
-        stopMenuItem.setEnabled(false); // Disable Stop initially
+        stopMenuItem.setEnabled(false);  // Disable Stop initially
 
-        workArea = new WorkArea();
+        blackboard = new Blackboard();
+        workArea = new WorkArea(blackboard);
         add(workArea);
 
-        server = new Server(workArea);
+        server = new Server(blackboard);
         serverThread = new Thread(server);
+        serverThread.start();  // Start the server (keeps it alive)
     }
 
     public static void main(String[] args) {
@@ -62,8 +64,8 @@ public class Main extends JFrame implements ActionListener {
         stopMenuItem.setEnabled(true);
         configureMenuItem.setEnabled(false);
 
-        workArea.startTracking();
-        serverThread.start();
+        blackboard.startTracking();  // Update tracking status on blackboard
+        server.startTransmission();  // Start data transmission
     }
 
     private void stopTracking() {
@@ -71,8 +73,8 @@ public class Main extends JFrame implements ActionListener {
         stopMenuItem.setEnabled(false);
         configureMenuItem.setEnabled(true);
 
-        workArea.stopTracking();
-        server.stopServer();
+        blackboard.stopTracking();  // Stop tracking, but server keeps running
+        server.stopTransmission();  // Stop transmission but don't shut down the server
     }
 
     private void configureSettings() {
@@ -85,6 +87,6 @@ public class Main extends JFrame implements ActionListener {
         int speed = Integer.parseInt(speedStr);
 
         setSize(width, height);
-        server.setTransmissionSpeed(speed);
+        blackboard.setTransmissionSpeed(speed);  // Update the transmission speed in the blackboard
     }
 }
