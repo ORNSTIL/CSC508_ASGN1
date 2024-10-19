@@ -3,14 +3,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Blackboard {
+    private static Blackboard blackboard_instance;
     private List<Point> clickPositions;  // Shared repository of click data
     private int transmissionSpeed;       // Shared transmission speed
     private boolean tracking;            // Shared state for tracking status
 
-    public Blackboard() {
+    private Blackboard() {
         this.clickPositions = new ArrayList<>();
         this.transmissionSpeed = 60;     // Default speed
         this.tracking = false;           // Initial state
+    }
+
+    public static synchronized Blackboard getInstance() {
+        if (blackboard_instance == null) {
+            blackboard_instance = new Blackboard();
+        }
+        return blackboard_instance;
     }
 
     // Add a click position to the blackboard

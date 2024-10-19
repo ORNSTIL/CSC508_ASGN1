@@ -34,7 +34,7 @@ public class Main extends JFrame implements ActionListener {
 
         stopMenuItem.setEnabled(false);  // Disable Stop initially
 
-        blackboard = new Blackboard();
+        blackboard = Blackboard.getInstance();
         workArea = new WorkArea(blackboard);
         add(workArea);
 
