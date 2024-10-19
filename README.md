@@ -1,7 +1,7 @@
 ### Group Members: Luca Ornstil, Monish Suresh, Christine Widden
-
+---
 ### Report: Instability and Cyclomatic Complexity Calculations
-
+---
 ### Main.java
 
 #### Instability Calculation:
@@ -188,11 +188,3 @@
 - `mouseExited(MouseEvent e)`:
   - No conditional logic or loops.
   - **Cyclomatic Complexity = 1**
-
-
-- **Main.java**: Instability = **1.0**, Cyclomatic complexity = 9 (summed across methods)
-- **Blackboard.java**: Instability = **0.0**, Cyclomatic complexity = 10 (summed across methods)
-- **Server.java**: Instability = **0.8**, Cyclomatic complexity = 13 (summed across methods)
-- **WorkArea.java**: Instability = **0.67**, Cyclomatic complexity = 7 (summed across methods)
-
-This report provides a detailed breakdown of each class's instability and cyclomatic complexity, giving you an insight into the overall maintainability and complexity of your codebase.
