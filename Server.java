@@ -41,7 +41,7 @@ public class Server implements Runnable {
                 public void run() {
                     sendClickData();
                 }
-            }, 0, 1000 / blackboard.getTransmissionSpeed());
+            }, 0, 1000 ); // removed division by transmission speed
         }
     }
 

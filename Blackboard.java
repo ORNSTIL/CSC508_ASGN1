@@ -23,7 +23,7 @@ public class Blackboard {
 
     // Add a click position to the blackboard
     public synchronized void addClick(Point click) {
-        if (tracking) {
+        if (tracking && clickPositions.size()<transmissionSpeed) { // added condition to cap number of clicks being sent
             clickPositions.add(click);
         }
     }
